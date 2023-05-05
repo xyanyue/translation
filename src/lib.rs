@@ -107,7 +107,6 @@ macro_rules! map {
 pub mod baidu;
 pub mod cnkis;
 pub mod err;
-extern crate ecb;
 use err::TransError;
 type Result<T> = std::result::Result<T, TransError>;
 /// 翻译Trait,所有翻译接口都实现这个Trait
@@ -239,74 +238,74 @@ impl Translate {
     }
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     #[test]
-//     fn it_works_CNKI() {
-//         let words = "A 55-year-old man presented for preoperative assessment following diagnosis of a dysplastic duodenal polyp on a background of familial adenomatous polyposis (FAP). The patient had prior surgical history of subtotal colectomy with ileorectal anastomosis with formation of ileo-anal pouch in 1981 with subsequent stoma reversal in 2000 (more than 20 years earlier).";
+#[cfg(test)]
+mod tests {
+    // use super::*;
+    // #[test]
+    // fn it_works_CNKI() {
+    //     let words = "A 55-year-old man presented for preoperative assessment following diagnosis of a dysplastic duodenal polyp on a background of familial adenomatous polyposis (FAP). The patient had prior surgical history of subtotal colectomy with ileorectal anastomosis with formation of ileo-anal pouch in 1981 with subsequent stoma reversal in 2000 (more than 20 years earlier).";
 
-//         let check_res = r#"患者男，55岁，因"家族性腺瘤性息肉病( FAP ) "背景下十二指肠异型增生性息肉就诊。患者既往有结肠次全切除回直肠吻合术史，1981年形成回肛袋，2000年(早了20多年)行造口还纳术。"#;
+    //     let check_res = r#"患者男，55岁，因"家族性腺瘤性息肉病( FAP ) "背景下十二指肠异型增生性息肉就诊。患者既往有结肠次全切除回直肠吻合术史，1981年形成回肛袋，2000年(早了20多年)行造口还纳术。"#;
 
-//         let mut cnki = Translate::Cnki.create();
-//         cnki.set_secret_key("4e87183cfd3a45fe");
-//         cnki.set_words(words);
-//         match cnki.trans() {
-//             Ok(tr_res) => {
-//                 println!("{}\n{:?}", words, tr_res);
-//                 assert_eq!(tr_res, check_res.to_owned())
-//             }
-//             Err(e) => println!("Err:{}", e),
-//         }
-//     }
+    //     let mut cnki = Translate::Cnki.create();
+    //     cnki.set_secret_key("4e87183cfd3a45fe");
+    //     cnki.set_words(words);
+    //     match cnki.trans() {
+    //         Ok(tr_res) => {
+    //             println!("{}\n{:?}", words, tr_res);
+    //             assert_eq!(tr_res, check_res.to_owned())
+    //         }
+    //         Err(e) => println!("Err:{}", e),
+    //     }
+    // }
 
-//     #[test]
-//     fn it_works_BAIDU() {
-//         let words = "A 55-year-old man presented for preoperative assessment following diagnosis of a dysplastic duodenal polyp on a background of familial adenomatous polyposis (FAP). The patient had prior surgical history of subtotal colectomy with ileorectal anastomosis with formation of ileo-anal pouch in 1981 with subsequent stoma reversal in 2000 (more than 20 years earlier).";
+    //     #[test]
+    //     fn it_works_BAIDU() {
+    //         let words = "A 55-year-old man presented for preoperative assessment following diagnosis of a dysplastic duodenal polyp on a background of familial adenomatous polyposis (FAP). The patient had prior surgical history of subtotal colectomy with ileorectal anastomosis with formation of ileo-anal pouch in 1981 with subsequent stoma reversal in 2000 (more than 20 years earlier).";
 
-//         let check_res = r#"一名55岁的男性在家族性腺瘤性息肉病（FAP）的背景下诊断为十二指肠息肉增生后进行术前评估。该患者曾于1981年接受结肠次全切除术，回肠直肠吻合术并形成回肠肛囊，随后于2000年（20多年前）造口逆转。"#;
+    //         let check_res = r#"一名55岁的男性在家族性腺瘤性息肉病（FAP）的背景下诊断为十二指肠息肉增生后进行术前评估。该患者曾于1981年接受结肠次全切除术，回肠直肠吻合术并形成回肠肛囊，随后于2000年（20多年前）造口逆转。"#;
 
-//         let mut baidu = Translate::Baidu.create();
+    //         let mut baidu = Translate::Baidu.create();
 
-//         baidu.set_appid("xxxxxxxxxxxx");
-//         baidu.set_secret_key("xxxxxxxxxxxx");
-//         baidu.set_from(Language::Auto);
-//         baidu.set_to(Language::Zh);
-//         baidu.set_domain(DomainType::Medicine);
-//         baidu.set_words(words);
-//         // // 此处可使用环境变量一类的
-//         match baidu.trans() {
-//             Ok(tr_res) => {
-//                 println!("{:?}\n{:?}", words, tr_res);
-//                 assert_eq!(tr_res, check_res.to_owned())
-//             }
-//             Err(e) => println!("Err:{}", e),
-//         }
-//     }
-//     #[test]
-//     fn test_cnki_docs() {
-//         let docs = "Left masticator space shows an altered signal intensity heterogeneous expansile soft tissue mass, showing iso-intense signal intensity on T1W, heterogeneously hyperintense to intermediate signal intensity on T2W lesion with low signal striations, seen arising from the posterior body and ramus of the mandible. The lesion shows diffusion restriction and heterogeneous enhancement on post-contrast images.
-//         The lesion extends from the anterior to the posterior border of the ramus of the mandible with thinning of the ramus of the mandible.  The lesion is infiltrating the left masseter muscle laterally and medial pterygoid muscle medially. The left parotid gland is seen compressed along the inferolateral margin of the lesion and is medially displacing the left parapharyngeal space towards the midline without infiltrating it.
-//         Ultrasound-guided core needle biopsy with needle tip within the lesion showing reverberation artifact.Histopathology reports suggest a poorly differentiated malignancy.
-//         Fluorescence in situ hybridization (FISH) is positive for EWSR1 (Ewing sarcoma breakpoint region 1) gene re-arrangement.
-//         The immunohistochemistry (IHC) panel shows the tumor is positive for CK (moderately), NKX 2.2, and CD99, which are features of Ewing sarcoma.";
-//         let mut cnki = Translate::Cnki.create();
-//         // cnki.set_secret_key("4e87183cfd3a45fe");
-//         println!("{:?}", cnki.docs(docs));
-//     }
-//     #[test]
-//     fn test_baidu_docs() {
-//         let docs = "Left masticator space shows an altered signal intensity heterogeneous expansile soft tissue mass, showing iso-intense signal intensity on T1W, heterogeneously hyperintense to intermediate signal intensity on T2W lesion with low signal striations, seen arising from the posterior body and ramus of the mandible. The lesion shows diffusion restriction and heterogeneous enhancement on post-contrast images.
-//         The lesion extends from the anterior to the posterior border of the ramus of the mandible with thinning of the ramus of the mandible.  The lesion is infiltrating the left masseter muscle laterally and medial pterygoid muscle medially. The left parotid gland is seen compressed along the inferolateral margin of the lesion and is medially displacing the left parapharyngeal space towards the midline without infiltrating it.
-//         Ultrasound-guided core needle biopsy with needle tip within the lesion showing reverberation artifact.Histopathology reports suggest a poorly differentiated malignancy.
-//         Fluorescence in situ hybridization (FISH) is positive for EWSR1 (Ewing sarcoma breakpoint region 1) gene re-arrangement.
-//         The immunohistochemistry (IHC) panel shows the tumor is positive for CK (moderately), NKX 2.2, and CD99, which are features of Ewing sarcoma.";
-//         let mut baidu = Translate::Baidu.create();
-//         baidu.set_appid("xxxxxxxxxxxx");
-//         baidu.set_secret_key("xxxxxxxxxxxxxx");
-//         baidu.set_from(Language::En);
-//         baidu.set_to(Language::Zh);
-//         baidu.set_domain(DomainType::Medicine);
-//         println!("{:?}", baidu.docs(docs));
-//     }
-// }
+    //         baidu.set_appid("xxxxxxxxxxxx");
+    //         baidu.set_secret_key("xxxxxxxxxxxx");
+    //         baidu.set_from(Language::Auto);
+    //         baidu.set_to(Language::Zh);
+    //         baidu.set_domain(DomainType::Medicine);
+    //         baidu.set_words(words);
+    //         // // 此处可使用环境变量一类的
+    //         match baidu.trans() {
+    //             Ok(tr_res) => {
+    //                 println!("{:?}\n{:?}", words, tr_res);
+    //                 assert_eq!(tr_res, check_res.to_owned())
+    //             }
+    //             Err(e) => println!("Err:{}", e),
+    //         }
+    //     }
+    //     #[test]
+    //     fn test_cnki_docs() {
+    //         let docs = "Left masticator space shows an altered signal intensity heterogeneous expansile soft tissue mass, showing iso-intense signal intensity on T1W, heterogeneously hyperintense to intermediate signal intensity on T2W lesion with low signal striations, seen arising from the posterior body and ramus of the mandible. The lesion shows diffusion restriction and heterogeneous enhancement on post-contrast images.
+    //         The lesion extends from the anterior to the posterior border of the ramus of the mandible with thinning of the ramus of the mandible.  The lesion is infiltrating the left masseter muscle laterally and medial pterygoid muscle medially. The left parotid gland is seen compressed along the inferolateral margin of the lesion and is medially displacing the left parapharyngeal space towards the midline without infiltrating it.
+    //         Ultrasound-guided core needle biopsy with needle tip within the lesion showing reverberation artifact.Histopathology reports suggest a poorly differentiated malignancy.
+    //         Fluorescence in situ hybridization (FISH) is positive for EWSR1 (Ewing sarcoma breakpoint region 1) gene re-arrangement.
+    //         The immunohistochemistry (IHC) panel shows the tumor is positive for CK (moderately), NKX 2.2, and CD99, which are features of Ewing sarcoma.";
+    //         let mut cnki = Translate::Cnki.create();
+    //         // cnki.set_secret_key("4e87183cfd3a45fe");
+    //         println!("{:?}", cnki.docs(docs));
+    //     }
+    //     #[test]
+    //     fn test_baidu_docs() {
+    //         let docs = "Left masticator space shows an altered signal intensity heterogeneous expansile soft tissue mass, showing iso-intense signal intensity on T1W, heterogeneously hyperintense to intermediate signal intensity on T2W lesion with low signal striations, seen arising from the posterior body and ramus of the mandible. The lesion shows diffusion restriction and heterogeneous enhancement on post-contrast images.
+    //         The lesion extends from the anterior to the posterior border of the ramus of the mandible with thinning of the ramus of the mandible.  The lesion is infiltrating the left masseter muscle laterally and medial pterygoid muscle medially. The left parotid gland is seen compressed along the inferolateral margin of the lesion and is medially displacing the left parapharyngeal space towards the midline without infiltrating it.
+    //         Ultrasound-guided core needle biopsy with needle tip within the lesion showing reverberation artifact.Histopathology reports suggest a poorly differentiated malignancy.
+    //         Fluorescence in situ hybridization (FISH) is positive for EWSR1 (Ewing sarcoma breakpoint region 1) gene re-arrangement.
+    //         The immunohistochemistry (IHC) panel shows the tumor is positive for CK (moderately), NKX 2.2, and CD99, which are features of Ewing sarcoma.";
+    //         let mut baidu = Translate::Baidu.create();
+    //         baidu.set_appid("xxxxxxxxxxxx");
+    //         baidu.set_secret_key("xxxxxxxxxxxxxx");
+    //         baidu.set_from(Language::En);
+    //         baidu.set_to(Language::Zh);
+    //         baidu.set_domain(DomainType::Medicine);
+    //         println!("{:?}", baidu.docs(docs));
+    //     }
+}

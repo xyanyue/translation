@@ -5,7 +5,7 @@ edition = "2021"
 keywords = ["translation"]
 license = "BSD-3-Clause"
 name = "translation"
-repository = "https://github.com/xyanyue/rand_user_agent.git"
+repository = "https://github.com/xyanyue/translation"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -13,7 +13,7 @@ version = "0.1.0"
 [dependencies]
 aes = "0.8"
 base64 = "0.21"
-ecb = {path = "./ecb", features = ["alloc"]}
+ecb = {version = "0.1.1", features = ["alloc"]}
 rand = "0.8"
 rand_user_agent = "0.1"
 # regex = "1.8"
