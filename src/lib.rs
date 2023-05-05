@@ -92,6 +92,14 @@
 //! println!("{:?}", baidu.docs(docs));
 //! ```
 //! 使用垂直行业接口,若使用其他行业，或通用领域，请自行更换接口API
+//!
+//! ### TUDO
+//! - [ ] Xunfei,
+//! - [ ] Youdao,
+//! - [ ] Deepl,
+//! - [ ] Ali,
+//! - [ ] Tencent,
+//! - [ ] 多尝试逆向免费版
 macro_rules! map {
     ( $( $k:expr => $v:expr ),* ) => {
         {
@@ -154,7 +162,7 @@ pub trait Translation<'a> {
             self.set_words(x);
             match self.trans() {
                 Ok(r) => res.push(r),
-                Err(e) => res.push(" ---translation err--- ".to_owned()),
+                Err(_) => res.push(" ---translation err--- ".to_owned()),
             }
         }
         res

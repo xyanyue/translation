@@ -83,13 +83,13 @@ impl<'a> Translation<'a> for CNKI<'a> {
             _ => self.tras_type = 1,
         }
     }
-    fn set_appid(&mut self, appid: &'a str) {}
+    fn set_appid(&mut self, _appid: &'a str) {}
 
     fn set_secret_key(&mut self, secret_key: &'a str) {
         self.key = secret_key;
     }
 
-    fn set_domain(&mut self, domain: DomainType) {}
+    fn set_domain(&mut self, _domain: DomainType) {}
 
     fn from(&self) -> Language {
         match self.tras_type {

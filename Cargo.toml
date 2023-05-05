@@ -4,7 +4,7 @@ description = "A simple translation API"
 edition = "2021"
 keywords = ["translation"]
 license = "BSD-3-Clause"
-name = "translation"
+name = "translation_api"
 repository = "https://github.com/xyanyue/translation"
 version = "0.1.0"
 
