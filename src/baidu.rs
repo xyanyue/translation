@@ -6,7 +6,7 @@ use serde::Deserialize;
 
 use crate::{
     err::{ErrInfoBuildle, TransError},
-    Language, Translation,
+    DomainType, Language, Translation,
 };
 
 const BAIDU_API: &str = "https://fanyi-api.baidu.com/api/trans/vip/fieldtranslate";
@@ -31,33 +31,14 @@ impl Display for BaiduRes {
         Ok(())
     }
 }
-#[derive(Debug, Clone, Copy)]
-pub enum DomainType {
-    Electronics, //电子科技领域
-    Finance,     //金融财经领域
-    Mechanics,   //水利机械领域
-    Medicine,    //生物医药领域
-    Novel,       //网络文学领域
-}
-impl From<DomainType> for &str {
-    fn from(value: DomainType) -> Self {
-        match value {
-            DomainType::Electronics => "electronics",
-            DomainType::Finance => "finance",
-            DomainType::Mechanics => "mechanics",
-            DomainType::Medicine => "medicine",
-            DomainType::Novel => "novel",
-        }
-    }
-}
 
 pub struct Baidu<'a> {
     words: &'a str,
     appid: &'a str,
-    sign: String,
+    // sign: String,
     from: Language,
     to: Language,
-    salt: String,
+    max_len: usize,
     domain: DomainType,
     secret_key: &'a str,
 }
@@ -72,27 +53,17 @@ impl<'a> Translation<'a> for Baidu<'a> {
     }
 
     fn trans(&mut self) -> Result<String> {
-        let mut map = HashMap::new();
-        map.insert("q", self.words.to_owned());
-        map.insert("appid", self.appid.to_owned());
-        map.insert("sign", self.sign.to_string());
-        map.insert("salt", self.salt.to_string());
-        map.insert("domain", Into::<&str>::into(self.domain).to_owned());
-        map.insert("from", Into::<&str>::into(self.from).to_owned());
-        map.insert("to", Into::<&str>::into(self.to).to_owned());
-
+        self.check()?;
+        let map = self.get_data();
         let client = reqwest::blocking::Client::new();
         let request = client.post(BAIDU_API).form(&map);
-        // .header(CONTENT_TYPE, "application/x-www-form-urlencoded");
-        // .send();
 
         let response = request.send().map_err(|e| {
             TransError::RequestError(
                 ErrInfoBuildle::new()
                     .model("BAIDU")
-                    .method("trans()")
+                    .method("trans() response")
                     .original(e.to_string())
-                    // .others(map!("token"=>token))
                     .build(),
             )
         })?;
@@ -102,10 +73,10 @@ impl<'a> Translation<'a> for Baidu<'a> {
         // Ok("".to_owned())
         // let a = ;
         let res = response.json::<BaiduRes>().map_err(|e| {
-            TransError::CNKIError(
+            TransError::BaiduError(
                 ErrInfoBuildle::new()
                     .model("Baidu")
-                    .method("trans()")
+                    .method("trans() res")
                     .original(e.to_string())
                     .data(serde_json::to_string(&map).unwrap())
                     .build(),
@@ -121,51 +92,131 @@ impl<'a> Translation<'a> for Baidu<'a> {
     fn set_to(&mut self, language: Language) {
         self.to = language
     }
+
+    fn set_appid(&mut self, appid: &'a str) {
+        self.appid = appid
+    }
+
+    fn set_secret_key(&mut self, secret_key: &'a str) {
+        self.secret_key = secret_key
+    }
+
+    fn set_domain(&mut self, domain: DomainType) {
+        self.domain = domain
+    }
+
+    fn build(&self) -> Box<dyn Translation<'a> + 'a> {
+        Box::new(Baidu::new())
+    }
+
+    fn from(&self) -> Language {
+        self.from
+    }
+
+    fn to(&self) -> Language {
+        self.to
+    }
+
+    fn appid(&self) -> &'a str {
+        self.appid
+    }
+
+    fn secret_key(&self) -> &'a str {
+        self.secret_key
+    }
+
+    fn domain(&self) -> DomainType {
+        self.domain
+    }
+
+    fn set_max_length(&mut self, l: usize) {
+        self.max_len = l;
+    }
+
+    fn max_length(&mut self) -> usize {
+        self.max_len
+    }
 }
 
 impl<'a> Baidu<'a> {
-    pub fn new(words: &'a str, appid: &'a str, secret_key: &'a str) -> Baidu {
-        let mut baidu = Baidu {
-            words,
-            appid,
-            sign: String::default(),
+    pub fn new() -> Baidu<'a> {
+        Baidu {
+            words: "",
+            appid: "",
             from: Language::Auto,
             to: Language::Zh,
-            salt: String::default(),
             domain: DomainType::Medicine,
-            secret_key,
-        };
-        baidu.set_salt();
-        baidu.set_sign();
-        baidu
+            secret_key: "",
+            max_len: 1500,
+        }
     }
-    fn set_apiid(&mut self, apiid: &'a str) {
-        self.appid = apiid;
-    }
-    fn set_secret_key(&mut self, secret_key: &'a str) {
-        self.secret_key = secret_key;
-    }
-
-    fn set_salt(&mut self) {
-        self.salt = thread_rng()
+    fn salt(&self) -> String {
+        thread_rng()
             .sample_iter(&Alphanumeric)
             .take(10)
             .map(char::from)
-            .collect();
+            .collect()
     }
-    fn set_sign(&mut self) {
+    fn sign(&self) -> (String, String) {
+        let salt = self.salt();
         // appid+q+salt+domain+密钥
         let s1 = format!(
             "{}{}{}{}{}",
             self.appid,
             self.words,
-            self.salt,
+            salt,
             Into::<&str>::into(self.domain),
             self.secret_key
         );
         let mut hasher = Md5::new();
 
         hasher.input_str(&s1);
-        self.sign = hasher.result_str();
+        (salt, hasher.result_str())
+    }
+    fn get_data(&self) -> HashMap<&str, String> {
+        let mut map = HashMap::new();
+        let (salt, sign) = self.sign();
+        map.insert("q", self.words.to_owned());
+        map.insert("appid", self.appid.to_owned());
+        map.insert("sign", sign);
+        map.insert("salt", salt);
+        map.insert("domain", Into::<&str>::into(self.domain).to_owned());
+        map.insert("from", Into::<&str>::into(self.from).to_owned());
+        map.insert("to", Into::<&str>::into(self.to).to_owned());
+        map
+    }
+    fn check(&self) -> Result<()> {
+        let l = self.words.len();
+        if l > self.max_len {
+            return Err(TransError::BaiduError(
+                ErrInfoBuildle::new()
+                    .model("Baidu")
+                    .method("check len")
+                    .original(format!("字符太长了,Max:{}", self.max_len))
+                    .build(),
+            ));
+        }
+
+        if l <= 0 {
+            return Err(TransError::BaiduError(
+                ErrInfoBuildle::new()
+                    .model("Baidu")
+                    .method("check len")
+                    .original(format!("字符words未设置了"))
+                    .build(),
+            ));
+        }
+
+        if self.appid().len() <= 0 || self.secret_key().len() <= 0 {
+            return Err(TransError::BaiduError(
+                ErrInfoBuildle::new()
+                    .model("Baidu")
+                    .method("check")
+                    .original(format!("未设置必要的Appid和秘钥：请调用baidu.set_appid(X) & baidu.set_secret_key(X)"))
+                    .build(),
+            ));
+        }
+
+        return Ok(());
     }
 }

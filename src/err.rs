@@ -64,6 +64,7 @@ impl fmt::Display for ErrInfo {
 pub enum TransError {
     RequestError(ErrInfo),
     CNKIError(ErrInfo),
+    BaiduError(ErrInfo),
 }
 impl fmt::Display for TransError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
@@ -73,6 +74,9 @@ impl fmt::Display for TransError {
             }
             TransError::CNKIError(e) => {
                 write!(f, "【TRANSLATION】 CNKIError : {}\n", e.to_string())
+            }
+            TransError::BaiduError(e) => {
+                write!(f, "【TRANSLATION】 BaiduError : {}\n", e.to_string())
             }
         }
     }

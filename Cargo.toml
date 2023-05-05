@@ -1,6 +1,11 @@
 [package]
+authors = ["JN.X <xyanyue@gmail.com>"]
+description = "A simple translation API"
 edition = "2021"
+keywords = ["translation"]
+license = "BSD-3-Clause"
 name = "translation"
+repository = "https://github.com/xyanyue/rand_user_agent.git"
 version = "0.1.0"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
@@ -10,6 +15,8 @@ aes = "0.8"
 base64 = "0.21"
 ecb = {path = "./ecb", features = ["alloc"]}
 rand = "0.8"
+rand_user_agent = "0.1"
+# regex = "1.8"
 reqwest = {version = "0.11", features = ["blocking", "json"]}
 rust-crypto = "0.2.36"
 serde = {version = "1.0", features = ["derive"]}
