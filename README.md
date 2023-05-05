@@ -92,3 +92,11 @@ baidu.set_domain(DomainType::Medicine);
 println!("{:?}", baidu.docs(docs));
 ```
 使用垂直行业接口,若使用其他行业，或通用领域，请自行更换接口API
+
+ ### TUDO
+ - [ ] Xunfei,
+ - [ ] Youdao,
+ - [ ] Deepl,
+ - [ ] Ali,
+ - [ ] Tencent,
+ - [ ] 多尝试逆向免费版
