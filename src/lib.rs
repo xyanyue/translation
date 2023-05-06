@@ -32,14 +32,16 @@
 //!
 //! ### CNKI 文档翻译
 //! ```no run
-//!     let docs = "Left masticator space shows an altered signal intensity heterogeneous expansile soft tissue mass, showing iso-intense signal intensity on T1W, heterogeneously hyperintense to intermediate signal intensity on T2W lesion with low signal striations, seen arising from the posterior body and ramus of the mandible. The lesion shows diffusion restriction and heterogeneous enhancement on post-contrast images.
+//!  let docs = "Left masticator space shows an altered signal intensity heterogeneous expansile soft tissue mass, showing iso-intense signal intensity on T1W, heterogeneously hyperintense to intermediate signal intensity on T2W lesion with low signal striations, seen arising from the posterior body and ramus of the mandible. The lesion shows diffusion restriction and heterogeneous enhancement on post-contrast images.
 //!     The lesion extends from the anterior to the posterior border of the ramus of the mandible with thinning of the ramus of the mandible.  The lesion is infiltrating the left masseter muscle laterally and medial pterygoid muscle medially. The left parotid gland is seen compressed along the inferolateral margin of the lesion and is medially displacing the left parapharyngeal space towards the midline without infiltrating it.
 //!     Ultrasound-guided core needle biopsy with needle tip within the lesion showing reverberation artifact.Histopathology reports suggest a poorly differentiated malignancy.
 //!     Fluorescence in situ hybridization (FISH) is positive for EWSR1 (Ewing sarcoma breakpoint region 1) gene re-arrangement.
 //!     The immunohistochemistry (IHC) panel shows the tumor is positive for CK (moderately), NKX 2.2, and CD99, which are features of Ewing sarcoma.";
+//!     
 //!     let mut cnki = Translate::Cnki.create();
 //!     // cnki.set_secret_key("4e87183cfd3a45fe");
 //!     println!("{:?}", cnki.docs(docs));
+//!
 //! ```
 //! 文档翻译,使用简单的标点【'!', '.', '?', ';', '？', '。', '；', '！'】切分。
 //! 结果生成一个Vec<String>。
@@ -83,6 +85,7 @@
 //! Ultrasound-guided core needle biopsy with needle tip within the lesion showing reverberation artifact.Histopathology reports suggest a poorly differentiated malignancy.
 //! Fluorescence in situ hybridization (FISH) is positive for EWSR1 (Ewing sarcoma breakpoint region 1) gene re-arrangement.
 //! The immunohistochemistry (IHC) panel shows the tumor is positive for CK (moderately), NKX 2.2, and CD99, which are features of Ewing sarcoma.";
+//!
 //! let mut baidu = Translate::Baidu.create();
 //! baidu.set_appid("xxxxxxxxxxxx");
 //! baidu.set_secret_key("xxxxxxxxxxxxxx");
